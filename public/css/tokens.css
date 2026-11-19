@@ -1,0 +1,84 @@
+/* ============================================================
+   Design tokens — every color / size / timing lives here
+   ============================================================ */
+
+/* Heading font: Saira Condensed for Latin, Kanit for Thai */
+@font-face { font-family: 'RovHead'; font-weight: 700; font-display: block;
+  src: url('../fonts/saira-condensed-latin-700-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+2000-206F, U+20AC; }
+@font-face { font-family: 'RovHead'; font-weight: 800; font-display: block;
+  src: url('../fonts/saira-condensed-latin-800-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+2000-206F, U+20AC; }
+@font-face { font-family: 'RovHead'; font-weight: 900; font-display: block;
+  src: url('../fonts/saira-condensed-latin-900-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+2000-206F, U+20AC; }
+@font-face { font-family: 'RovHead'; font-weight: 700; font-display: block;
+  src: url('../fonts/kanit-thai-800-normal.woff2') format('woff2');
+  unicode-range: U+0E00-0E7F; }
+@font-face { font-family: 'RovHead'; font-weight: 800 900; font-display: block;
+  src: url('../fonts/kanit-thai-900-normal.woff2') format('woff2');
+  unicode-range: U+0E00-0E7F; }
+
+/* Body font: Kanit */
+@font-face { font-family: 'RovBody'; font-weight: 500; font-display: swap;
+  src: url('../fonts/kanit-thai-500-normal.woff2') format('woff2'); unicode-range: U+0E00-0E7F; }
+@font-face { font-family: 'RovBody'; font-weight: 500; font-display: swap;
+  src: url('../fonts/kanit-latin-500-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+2000-206F; }
+@font-face { font-family: 'RovBody'; font-weight: 700; font-display: swap;
+  src: url('../fonts/kanit-thai-700-normal.woff2') format('woff2'); unicode-range: U+0E00-0E7F; }
+@font-face { font-family: 'RovBody'; font-weight: 700; font-display: swap;
+  src: url('../fonts/kanit-latin-700-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+2000-206F; }
+
+:root {
+  /* ---- palette ---- */
+  --c-void: #050609;          /* full-screen scene background */
+  --c-panel: #0C0E14;         /* scoreboard panel */
+  --c-panel-2: #161A24;       /* raised surface */
+  --c-line: #2A3142;          /* separators, empty dots */
+  --c-text: #FFFFFF;
+  --c-text-dim: #B9C1D4;
+  --c-ink: #0A0B10;           /* dark text on bright team color */
+  --c-accent: #FFFFFF;
+
+  /* team colors (overwritten by JS per side) */
+  --team-l: #FF3D8B;
+  --team-r: #FFD21A;
+  --ink-l: #0A0B10;
+  --ink-r: #0A0B10;
+
+  /* ---- type ---- */
+  --font-head: 'RovHead', 'Kanit', 'Arial Narrow', sans-serif;
+  --font-body: 'RovBody', 'Kanit', 'Segoe UI', sans-serif;
+
+  /* ---- shape ---- */
+  --cut: 28px;                /* chamfer size on panels */
+  --cut-sm: 14px;
+
+  /* ---- scoreboard ---- */
+  --sb-gap: 620px;            /* centre gap left for in-game HUD (set live from control) */
+  --sb-panel-w: 520px;        /* width of each team panel */
+  --sb-height: 92px;
+  --sb-stripe: 18px;          /* team color stripe */
+  --sb-logo: 68px;
+  --sb-tag-size: 66px;
+  --sb-dot: 30px;
+  --sb-dot-gap: 12px;
+  --sb-sub-h: 44px;           /* round / game strip under panels */
+  --sb-sub-size: 28px;
+
+  /* ---- full-screen scenes ---- */
+  --fs-title: 150px;
+  --fs-sub: 48px;
+  --fs-clock: 260px;
+  --fs-tag: 260px;
+  --fs-name: 64px;
+  --fs-mono: 300px;
+
+  /* ---- motion ---- */
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --ease-in: cubic-bezier(.7, 0, .84, 0);
+  --ease-snap: cubic-bezier(.34, 1.56, .64, 1);
+  --t-in: 700ms;
+  --t-out: 450ms;
+  --t-stinger: 1300ms;
+}

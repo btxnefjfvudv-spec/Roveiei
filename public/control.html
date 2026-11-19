@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0C0E14">
+  <title>RoV Control</title>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/control.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">ROV CONTROL</div>
+    <div class="status" id="status"><i></i><span>กำลังเชื่อมต่อ…</span></div>
+  </header>
+
+  <main>
+    <!-- SCENES -->
+    <section class="card">
+      <h2>ฉาก <small>กดแล้วเล่น stinger ให้เอง</small></h2>
+      <div class="grid g2" id="scenes">
+        <button class="btn scene big" data-scene="scoreboard">Scoreboard</button>
+        <button class="btn scene" data-scene="starting">Starting</button>
+        <button class="btn scene" data-scene="matchup">Matchup</button>
+        <button class="btn scene wide" data-scene="break">Break</button>
+        <button class="btn scene win" data-scene="winner" data-win="left"><span>Winner</span> <b data-tag="left">SKT</b></button>
+        <button class="btn scene win" data-scene="winner" data-win="right"><span>Winner</span> <b data-tag="right">CSN</b></button>
+      </div>
+      <button class="btn toggle" id="sbToggle">Scoreboard: แสดงอยู่</button>
+    </section>
+
+    <!-- SCORE -->
+    <section class="card">
+      <h2>คะแนนซีรีส์</h2>
+      <div class="score">
+        <div class="score-col" data-side="left">
+          <div class="score-team"><span data-tag="left">SKT</span></div>
+          <div class="score-num" data-score="left">0</div>
+          <div class="score-btns">
+            <button class="btn minus" data-act="score" data-side="left" data-delta="-1">−</button>
+            <button class="btn plus" data-act="score" data-side="left" data-delta="1">+</button>
+          </div>
+        </div>
+        <div class="score-col" data-side="right">
+          <div class="score-team"><span data-tag="right">CSN</span></div>
+          <div class="score-num" data-score="right">0</div>
+          <div class="score-btns">
+            <button class="btn minus" data-act="score" data-side="right" data-delta="-1">−</button>
+            <button class="btn plus" data-act="score" data-side="right" data-delta="1">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="seg" id="bo">
+        <button class="btn" data-bo="1">BO1</button>
+        <button class="btn" data-bo="3">BO3</button>
+        <button class="btn" data-bo="5">BO5</button>
+      </div>
+      <button class="btn ghost" id="resetScore">รีเซ็ตคะแนน (0–0, GAME 1)</button>
+    </section>
+
+    <!-- ROUND / GAME -->
+    <section class="card">
+      <h2>รอบ / เกม</h2>
+      <label class="field">ชื่อรอบ
+        <div class="row"><input id="roundName" type="text" maxlength="60" placeholder="เช่น รอบชิงชนะเลิศ"><button class="btn small" id="roundSave">บันทึก</button></div>
+      </label>
+      <div class="row quick" id="roundQuick">
+        <button class="chip">รอบแบ่งกลุ่ม</button>
+        <button class="chip">รอบรองชนะเลิศ</button>
+        <button class="chip">รอบชิงอันดับ 3</button>
+        <button class="chip">รอบชิงชนะเลิศ</button>
+      </div>
+      <div class="stepper">
+        <span class="label">GAME</span>
+        <button class="btn" id="gameMinus">−</button>
+        <div class="value" id="gameNum">1</div>
+        <button class="btn" id="gamePlus">+</button>
+      </div>
+      <label class="field">ชื่องาน (มุมซ้ายบนฉากเต็มจอ)
+        <div class="row"><input id="eventName" type="text" maxlength="60"><button class="btn small" id="eventSave">บันทึก</button></div>
+      </label>
+    </section>
+
+    <!-- COUNTDOWN -->
+    <section class="card">
+      <h2>นับถอยหลัง</h2>
+      <div class="clock" id="clock">10:00</div>
+      <div class="grid g4" id="presets">
+        <button class="btn" data-min="1">1 นาที</button>
+        <button class="btn" data-min="3">3 นาที</button>
+        <button class="btn" data-min="5">5 นาที</button>
+        <button class="btn" data-min="10">10 นาที</button>
+        <button class="btn" data-min="15">15 นาที</button>
+        <button class="btn" data-min="20">20 นาที</button>
+        <button class="btn" data-min="30">30 นาที</button>
+        <div class="custom"><input id="customMin" type="number" min="0" max="99" inputmode="numeric" placeholder="นาที"><button class="btn small" id="customSet">ตั้ง</button></div>
+      </div>
+      <div class="grid g3">
+        <button class="btn go" id="cdStart">▶ เริ่ม</button>
+        <button class="btn stop" id="cdStop">❚❚ หยุด</button>
+        <button class="btn" id="cdReset">↺ รีเซ็ต</button>
+      </div>
+    </section>
+
+    <!-- TEAMS -->
+    <section class="card">
+      <h2>ทีม</h2>
+      <div class="teams">
+        <label class="field">ซ้าย<select id="teamLeft"></select></label>
+        <button class="btn swap" id="swap" title="สลับฝั่ง">⇄</button>
+        <label class="field">ขวา<select id="teamRight"></select></label>
+      </div>
+      <p class="hint">สลับฝั่ง = สลับทั้งทีมและคะแนน · เพิ่มทีมได้ใน teams.json (อัปเดตเองไม่ต้องรีสตาร์ท)</p>
+    </section>
+
+    <!-- LAYOUT -->
+    <section class="card">
+      <h2>ช่องว่างกลางจอ <small>ไม่ให้บัง HUD เกม</small></h2>
+      <div class="stepper">
+        <button class="btn" id="gapMinus">−</button>
+        <div class="value"><span id="gapVal">620</span><small>px</small></div>
+        <button class="btn" id="gapPlus">+</button>
+      </div>
+      <input type="range" id="gap" min="0" max="1200" step="10">
+    </section>
+  </main>
+
+  <script src="js/socket.js"></script>
+  <script src="js/control.js"></script>
+</body>
+</html>

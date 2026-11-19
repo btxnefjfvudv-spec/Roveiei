@@ -1,0 +1,7 @@
+{
+  "teams": [
+    { "name": "Sukhothai",   "tag": "SKT", "color": "#FF3D8B", "logo": "" },
+    { "name": "Chiang Saen", "tag": "CSN", "color": "#FFD21A", "logo": "" },
+    { "name": "To Be Decided", "tag": "TBD", "color": "#8A94A8", "logo": "" }
+  ]
+}
