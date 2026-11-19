@@ -12,117 +12,149 @@
 
     <!-- ===================== SCOREBOARD ===================== -->
     <section id="sb" class="sb" aria-label="scoreboard">
-      <div class="sb-side sb-left" data-side="left">
-        <div class="sb-anim">
-          <div class="sb-panel">
+      <div class="sb-bridge"></div>
+
+      <div class="sb-side sb-left">
+        <div class="sb-mask">
+          <div class="sb-mod">
+            <div class="sb-wash"></div>
             <div class="sb-flash"></div>
-            <div class="sb-stripe"></div>
-            <div class="sb-logo" data-mono="left"></div>
-            <div class="sb-tag" data-text="left.tag">SKT</div>
-            <div class="sb-dots" data-dots="left"></div>
+            <div class="sb-edge"></div>
+            <div class="sb-crest" data-crest="left" data-variant="initial"></div>
+            <div class="sb-tag" data-text="left.tag"></div>
+            <div class="sb-pips" data-dots="left"></div>
           </div>
-          <div class="sb-sub"><span data-text="roundName"></span></div>
+        </div>
+        <div class="sb-meta-mask">
+          <div class="sb-meta"><span class="th" data-text="roundName"></span></div>
         </div>
       </div>
-      <div class="sb-side sb-right" data-side="right">
-        <div class="sb-anim">
-          <div class="sb-panel">
+
+      <div class="sb-side sb-right">
+        <div class="sb-mask">
+          <div class="sb-mod">
+            <div class="sb-wash"></div>
             <div class="sb-flash"></div>
-            <div class="sb-dots" data-dots="right"></div>
-            <div class="sb-tag" data-text="right.tag">CSN</div>
-            <div class="sb-logo" data-mono="right"></div>
-            <div class="sb-stripe"></div>
+            <div class="sb-pips" data-dots="right"></div>
+            <div class="sb-tag" data-text="right.tag"></div>
+            <div class="sb-crest" data-crest="right" data-variant="initial"></div>
+            <div class="sb-edge"></div>
           </div>
-          <div class="sb-sub"><span>GAME <b data-text="gameNumber">1</b></span><i class="sb-sep"></i><span data-text="boLabel">BO3</span></div>
+        </div>
+        <div class="sb-meta-mask">
+          <div class="sb-meta"><span>GAME <b data-text="gameNumber"></b></span><i class="sb-dot"></i><span class="dim" data-text="boLabel"></span></div>
         </div>
       </div>
     </section>
 
     <!-- ===================== STARTING ===================== -->
     <section class="scene scene-starting" data-scene="starting">
-      <div class="bg-stripes"></div>
-      <div class="corner-chip a-drop"><span data-text="eventName"></span></div>
-      <div class="st-center">
-        <div class="st-title a-rise">STARTING SOON</div>
-        <div class="st-sub a-rise d1">การแข่งขันกำลังจะเริ่มในอีก</div>
-        <div class="clock-box a-pop d2"><span class="clock" data-clock></span></div>
+      <div class="bg"><i class="bg-glow-l"></i><i class="bg-glow-r"></i><i class="bg-grid"></i><i class="bg-sweep"></i><i class="bg-noise"></i></div>
+      <header class="topbar fade d0"><div class="brand"><i></i><span class="th" data-text="eventName"></span></div><div class="topbar-r th" data-text="roundName"></div></header>
+
+      <div class="st-left">
+        <div class="kicker rv d1"><span class="th">การแข่งขันกำลังจะเริ่มขึ้น</span></div>
+        <div class="st-title rv d2"><span>STARTING</span></div>
+        <div class="st-title rv d3"><span>SOON</span></div>
       </div>
-      <div class="st-bottom a-up d3">
-        <div class="mini-team mini-l"><div class="mini-mono" data-mono="left"></div><span data-text="left.tag"></span></div>
-        <div class="mini-vs">VS</div>
-        <div class="mini-team mini-r"><span data-text="right.tag"></span><div class="mini-mono" data-mono="right"></div></div>
-        <div class="mini-round" data-text="roundName"></div>
+
+      <div class="st-clock panel fade-up d3">
+        <div class="label"><span>STARTS IN</span><span class="th label-th">เริ่มในอีก</span></div>
+        <div class="clock" data-clock></div>
+        <div class="st-clock-bar"><i data-progress></i></div>
+      </div>
+
+      <div class="st-match fade-up d4">
+        <div class="stm-team stm-l"><div class="stm-crest" data-crest="left"></div><div class="stm-id"><b data-text="left.tag"></b><span data-text="left.name"></span></div></div>
+        <div class="stm-vs"><span>VS</span><small data-text="boLabel"></small></div>
+        <div class="stm-team stm-r"><div class="stm-id"><b data-text="right.tag"></b><span data-text="right.name"></span></div><div class="stm-crest" data-crest="right"></div></div>
       </div>
     </section>
 
     <!-- ===================== MATCHUP ===================== -->
     <section class="scene scene-matchup" data-scene="matchup">
-      <div class="mu-half mu-l">
-        <div class="mu-content">
-          <div class="mu-mono a-pop d2" data-mono="left" data-variant="on-color"></div>
-          <div class="mu-tag a-slide-l d3" data-text="left.tag"></div>
-          <div class="mu-name a-slide-l d4" data-text="left.name"></div>
-        </div>
+      <div class="bg"><i class="mu-light-l"></i><i class="mu-light-r"></i><i class="bg-grid"></i><i class="bg-noise"></i></div>
+      <div class="mu-water mu-water-l" data-text="left.tag"></div>
+      <div class="mu-water mu-water-r" data-text="right.tag"></div>
+      <i class="mu-edge mu-edge-l"></i><i class="mu-edge mu-edge-r"></i>
+      <header class="topbar fade d0"><div class="brand"><i></i><span class="th" data-text="eventName"></span></div><div class="topbar-r th" data-text="roundName"></div></header>
+
+      <div class="mu-side mu-l">
+        <div class="mu-crest crest-in d2" data-crest="left"></div>
+        <div class="mu-tag rv d3"><span data-text="left.tag"></span></div>
+        <div class="mu-name rv d4"><span data-text="left.name"></span></div>
       </div>
-      <div class="mu-half mu-r">
-        <div class="mu-content">
-          <div class="mu-mono a-pop d2" data-mono="right" data-variant="on-color"></div>
-          <div class="mu-tag a-slide-r d3" data-text="right.tag"></div>
-          <div class="mu-name a-slide-r d4" data-text="right.name"></div>
-        </div>
+      <div class="mu-side mu-r">
+        <div class="mu-crest crest-in d2" data-crest="right"></div>
+        <div class="mu-tag rv d3"><span data-text="right.tag"></span></div>
+        <div class="mu-name rv d4"><span data-text="right.name"></span></div>
       </div>
-      <div class="mu-seam"></div>
-      <div class="mu-vs a-vs"><span>VS</span></div>
-      <div class="mu-info a-up d5">
-        <span data-text="roundName"></span><i class="sep"></i><span>GAME <b data-text="gameNumber"></b></span><i class="sep"></i><span data-text="boLabel"></span>
+
+      <div class="mu-center">
+        <i class="mu-line grow d3"></i>
+        <div class="mu-vs fade d4">VS</div>
+        <i class="mu-line grow d3"></i>
       </div>
-      <div class="corner-chip a-drop"><span data-text="eventName"></span></div>
+
+      <div class="infobar fade-up d5">
+        <span class="th" data-text="roundName"></span><i class="sb-dot"></i><span>GAME <b data-text="gameNumber"></b></span><i class="sb-dot"></i><span class="dim" data-text="boLabel"></span>
+      </div>
     </section>
 
     <!-- ===================== BREAK ===================== -->
     <section class="scene scene-break" data-scene="break">
-      <div class="bg-stripes"></div>
-      <div class="corner-chip a-drop"><span data-text="eventName"></span></div>
+      <div class="bg"><i class="bg-glow-l"></i><i class="bg-glow-r"></i><i class="bg-grid"></i><i class="bg-sweep"></i><i class="bg-noise"></i></div>
+      <header class="topbar fade d0"><div class="brand"><i></i><span class="th" data-text="eventName"></span></div><div class="topbar-r th" data-text="roundName"></div></header>
+
       <div class="br-head">
-        <div class="br-title a-rise">พักเบรก</div>
-        <div class="br-sub a-rise d1">BREAK · <span data-text="roundName"></span></div>
+        <div class="kicker rv d1"><span>BREAK</span></div>
+        <div class="br-title rv d2"><span class="th">พักการแข่งขัน</span></div>
       </div>
-      <div class="br-score">
-        <div class="br-team br-l a-slide-l d2">
-          <div class="br-mono" data-mono="left"></div>
-          <div class="br-id"><div class="br-tag" data-text="left.tag"></div><div class="br-name" data-text="left.name"></div></div>
+
+      <div class="br-card fade-up d3">
+        <div class="br-half br-l">
+          <div class="br-crest" data-crest="left"></div>
+          <div class="br-id"><b data-text="left.tag"></b><span data-text="left.name"></span></div>
           <div class="br-num" data-text="left.score"></div>
         </div>
-        <div class="br-dash a-pop d3">:</div>
-        <div class="br-team br-r a-slide-r d2">
+        <div class="br-mid"><span>SERIES</span><b data-text="boLabel"></b></div>
+        <div class="br-half br-r">
           <div class="br-num" data-text="right.score"></div>
-          <div class="br-id"><div class="br-tag" data-text="right.tag"></div><div class="br-name" data-text="right.name"></div></div>
-          <div class="br-mono" data-mono="right"></div>
+          <div class="br-id"><b data-text="right.tag"></b><span data-text="right.name"></span></div>
+          <div class="br-crest" data-crest="right"></div>
         </div>
       </div>
-      <div class="br-foot a-up d4">
-        <div class="br-next">ต่อไป · GAME <b data-text="gameNumber"></b> <span class="dim" data-text="boLabel"></span></div>
-        <div class="br-clock" data-when-clock>กลับมาในอีก <span class="clock" data-clock></span></div>
+
+      <div class="br-foot fade-up d4">
+        <div class="chip"><span class="label">NEXT</span><span>GAME <b data-text="gameNumber"></b></span></div>
+        <div class="chip chip-hi" data-when-clock><span class="label th">กลับมาในอีก</span><span class="clock" data-clock></span></div>
       </div>
     </section>
 
     <!-- ===================== WINNER ===================== -->
     <section class="scene scene-winner" data-scene="winner">
-      <div class="wn-rays"></div>
+      <div class="bg"><i class="wn-light"></i><i class="wn-streaks"></i><i class="bg-grid"></i><i class="bg-noise"></i></div>
+      <div class="wn-halo"></div>
+      <header class="topbar fade d0"><div class="brand"><i></i><span class="th" data-text="eventName"></span></div><div class="topbar-r th" data-text="roundName"></div></header>
+
       <div class="wn-body">
-        <div class="wn-label a-rise">WINNER</div>
-        <div class="wn-mono a-pop d1" data-mono="winner" data-variant="on-color"></div>
-        <div class="wn-name a-rise d2" data-text="winner.name"></div>
-        <div class="wn-meta a-up d3">
-          <span class="wn-th">ผู้ชนะ</span><i class="sep"></i><span data-text="roundName"></span><i class="sep"></i><span class="wn-score" data-text="finalScore"></span>
+        <div class="kicker wn-kicker rv d1"><span>MATCH WINNER</span></div>
+        <div class="wn-crest crest-in d2" data-crest="winner"></div>
+        <div class="wn-name rv d3"><span data-text="winner.name"></span></div>
+        <div class="wn-th rv d4"><span class="th">ผู้ชนะการแข่งขัน</span></div>
+        <div class="wn-score fade-up d5">
+          <span class="wn-s-tag" data-text="winner.tag"></span>
+          <b data-text="winner.score"></b><i>–</i><b class="dim" data-text="loser.score"></b>
+          <span class="wn-s-tag dim" data-text="loser.tag"></span>
         </div>
       </div>
-      <div class="corner-chip a-drop"><span data-text="eventName"></span></div>
     </section>
 
     <!-- ===================== STINGER ===================== -->
     <div id="stinger" aria-hidden="true">
-      <div class="st-band"><div class="st-mark" data-text="eventName"></div></div>
+      <i class="st-layer st-a"></i>
+      <i class="st-layer st-b"></i>
+      <div class="st-layer st-c"><div class="st-mark"><i></i><span class="th" data-text="eventName"></span></div></div>
     </div>
 
     <div id="conn" class="conn">กำลังเชื่อมต่อ server…</div>

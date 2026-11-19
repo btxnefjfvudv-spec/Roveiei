@@ -11,12 +11,13 @@
   const stinger = $('#stinger');
 
   const FALLBACK = { name: 'TBD', tag: 'TBD', color: '#8A94A8', logo: '' };
-  const STINGER_MS = parseFloat(getComputedStyle(root).getPropertyValue('--t-stinger')) || 1300;
+  const STINGER_MS = parseFloat(getComputedStyle(root).getPropertyValue('--t-stinger')) || 1150;
+  const STINGER_LAG = 110; // delay of the dark cover layer (matches CSS)
 
-  let S = null;            // latest state
+  let S = null;
   let teamMap = {};
-  let shown = null;        // scene currently on screen
-  let busy = false;        // stinger playing
+  let shown = null;
+  let busy = false;
   let queued = null;
   let prevScore = null;
   let prevBo = null;
@@ -24,12 +25,10 @@
 
   if (new URLSearchParams(location.search).has('preview')) document.body.classList.add('preview');
 
-  /* ---------- stage scaling (OBS = 1920x1080 → scale 1) ---------- */
+  /* ---------- stage scaling (OBS 1920x1080 → scale 1) ---------- */
   function fit() {
     const s = Math.min(innerWidth / 1920, innerHeight / 1080);
-    const x = (innerWidth - 1920 * s) / 2;
-    const y = (innerHeight - 1080 * s) / 2;
-    stage.style.transform = `translate(${x}px, ${y}px) scale(${s})`;
+    stage.style.transform = `translate(${(innerWidth - 1920 * s) / 2}px, ${(innerHeight - 1080 * s) / 2}px) scale(${s})`;
   }
   addEventListener('resize', fit);
   fit();
@@ -37,29 +36,24 @@
   /* ---------- helpers ---------- */
   const team = (tag) => teamMap[tag] || { ...FALLBACK, tag: tag || 'TBD' };
   const winsNeeded = () => Math.ceil(S.bestOf / 2);
+  const rgb = (hex) => {
+    const n = parseInt(hex.slice(1), 16);
+    return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
+  };
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-  function monoHTML(t, variant) {
-    const onColor = variant === 'on-color';
-    const style = [
-      `--mo:${onColor ? 'var(--c-void)' : t.color}`,
-      `--mf:var(--c-panel)`,
-      `--mt:${t.color}`,
-    ].join(';');
-    const inner = t.logo
-      ? `<img src="${encodeURI(t.logo)}" alt="" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'${t.tag}'}))">`
-      : `<span>${escapeHTML(t.tag)}</span>`;
-    return `<div class="mono" style="${style}">${inner}</div>`;
-  }
-
-  function escapeHTML(s) {
-    return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  function crestHTML(t, variant) {
+    const text = variant === 'initial' ? t.tag.charAt(0) : t.tag;
+    const style = `--c:${t.color};--ink:${inkFor(t.color)}`;
+    if (t.logo) {
+      return `<div class="crest" style="${style}"><img src="${esc(t.logo)}" alt="" onerror="this.parentNode.classList.add('nologo');this.replaceWith(Object.assign(document.createElement('i'),{className:'cs'}),Object.assign(document.createElement('span'),{textContent:${esc(JSON.stringify(text))}}))"></div>`;
+    }
+    return `<div class="crest ${variant === 'initial' ? 'initial' : ''}" style="${style}"><i class="cs"></i><span>${esc(text)}</span></div>`;
   }
 
   function setText(key, value) {
-    for (const el of $$(`[data-text="${key}"]`)) {
-      const v = String(value);
-      if (el.textContent !== v) el.textContent = v;
-    }
+    const v = String(value);
+    for (const el of $$(`[data-text="${key}"]`)) if (el.textContent !== v) el.textContent = v;
   }
 
   /* ---------- render ---------- */
@@ -68,17 +62,17 @@
     teamMap = Object.fromEntries((teams || []).map((t) => [t.tag, t]));
     const L = team(S.left.tag);
     const R = team(S.right.tag);
-    const W = S.winnerSide === 'right' ? R : L;
-    const ws = S.winnerSide === 'right' ? S.right : S.left;
-    const ls = S.winnerSide === 'right' ? S.left : S.right;
+    const winRight = S.winnerSide === 'right';
+    const W = winRight ? R : L;
+    const Lo = winRight ? L : R;
 
-    root.style.setProperty('--team-l', L.color);
-    root.style.setProperty('--team-r', R.color);
-    root.style.setProperty('--ink-l', inkFor(L.color));
-    root.style.setProperty('--ink-r', inkFor(R.color));
-    root.style.setProperty('--win', W.color);
-    root.style.setProperty('--win-ink', inkFor(W.color));
-    root.style.setProperty('--sb-gap', `${S.gapWidth}px`);
+    const vars = {
+      '--team-l': L.color, '--team-l-rgb': rgb(L.color), '--ink-l': inkFor(L.color),
+      '--team-r': R.color, '--team-r-rgb': rgb(R.color), '--ink-r': inkFor(R.color),
+      '--win': W.color, '--win-rgb': rgb(W.color), '--win-ink': inkFor(W.color),
+      '--sb-gap': `${S.gapWidth}px`,
+    };
+    for (const [k, v] of Object.entries(vars)) root.style.setProperty(k, v);
 
     setText('left.tag', L.tag);
     setText('right.tag', R.tag);
@@ -87,42 +81,38 @@
     setText('left.score', S.left.score);
     setText('right.score', S.right.score);
     setText('winner.name', W.name);
-    setText('finalScore', `${ws.score} – ${ls.score}`);
+    setText('winner.tag', W.tag);
+    setText('loser.tag', Lo.tag);
+    setText('winner.score', (winRight ? S.right : S.left).score);
+    setText('loser.score', (winRight ? S.left : S.right).score);
     setText('roundName', S.roundName);
     setText('eventName', S.eventName);
     setText('gameNumber', S.gameNumber);
     setText('boLabel', `BO${S.bestOf}`);
 
-    const monoKey = (side) => (side === 'winner' ? W : side === 'right' ? R : L);
-    for (const el of $$('[data-mono]')) {
-      const t = monoKey(el.dataset.mono);
+    for (const el of $$('[data-crest]')) {
+      const side = el.dataset.crest;
+      const t = side === 'winner' ? W : side === 'right' ? R : L;
       const sig = `${t.tag}|${t.color}|${t.logo}`;
       if (el.dataset.sig !== sig) {
         el.dataset.sig = sig;
-        el.innerHTML = monoHTML(t, el.dataset.variant);
+        el.innerHTML = crestHTML(t, el.dataset.variant);
       }
     }
 
-    renderDots();
+    renderPips();
     updateScene();
     tickClock();
   }
 
-  function renderDots() {
+  function renderPips() {
     const need = winsNeeded();
     const score = { left: S.left.score, right: S.right.score };
     for (const side of ['left', 'right']) {
       const box = $(`[data-dots="${side}"]`);
-      if (prevBo !== S.bestOf || box.children.length !== need) {
-        box.innerHTML = '<i class="dot"></i>'.repeat(need);
-      }
-      const dots = Array.from(box.children);
-      dots.forEach((d, i) => d.classList.toggle('on', i < score[side]));
-      if (prevScore && prevBo === S.bestOf && score[side] > prevScore[side]) {
-        const d = dots[score[side] - 1];
-        if (d) restartClass(d, 'pop');
-        restartClass($(`.sb-${side}`), 'bump');
-      }
+      if (box.children.length !== need) box.innerHTML = '<i class="dot"></i>'.repeat(need);
+      Array.from(box.children).forEach((d, i) => d.classList.toggle('on', i < score[side]));
+      if (prevScore && prevBo === S.bestOf && score[side] > prevScore[side]) restartClass($(`.sb-${side}`), 'bump');
     }
     prevScore = score;
     prevBo = S.bestOf;
@@ -136,19 +126,15 @@
 
   /* ---------- scenes + stinger ---------- */
   function updateScene() {
-    if (shown === null) {
-      applyScene(S.scene);
-    } else if (S.scene !== shown) {
-      transition(S.scene);
-    }
+    if (shown === null) applyScene(S.scene);
+    else if (S.scene !== shown) transition(S.scene);
     sb.classList.toggle('is-in', shown === 'scoreboard' && S.scoreboardVisible);
   }
 
   function applyScene(scene) {
     shown = scene;
     for (const el of $$('.scene')) {
-      const on = el.dataset.scene === scene;
-      if (on) restartClass(el, 'active');
+      if (el.dataset.scene === scene) restartClass(el, 'active');
       else el.classList.remove('active');
     }
     sb.classList.toggle('is-in', scene === 'scoreboard' && S.scoreboardVisible);
@@ -160,19 +146,18 @@
       return;
     }
     busy = true;
-    const band = $('.st-band');
     const toWinner = scene === 'winner';
-    band.style.setProperty('--st-a', toWinner ? 'var(--win)' : 'var(--team-l)');
-    band.style.setProperty('--st-b', toWinner ? 'var(--win)' : 'var(--team-r)');
+    stinger.style.setProperty('--st-a', toWinner ? 'var(--win)' : 'var(--team-l)');
+    stinger.style.setProperty('--st-b', toWinner ? 'var(--win)' : 'var(--team-r)');
     restartClass(stinger, 'play');
-    setTimeout(() => applyScene(scene), STINGER_MS * 0.5);
+    setTimeout(() => applyScene(scene), STINGER_LAG + STINGER_MS * 0.5);
     setTimeout(() => {
       busy = false;
       stinger.classList.remove('play');
       const next = queued || S.scene;
       queued = null;
       if (next !== shown) transition(next);
-    }, STINGER_MS + 30);
+    }, STINGER_LAG + STINGER_MS + 40);
   }
 
   /* ---------- countdown ---------- */
@@ -187,8 +172,9 @@
       lastClock = txt;
       for (const el of $$('[data-clock]')) el.textContent = txt;
     }
-    const done = ms <= 0;
-    for (const el of $$('.clock-box')) el.classList.toggle('done', done && cd.durationMs > 0);
+    const frac = cd.durationMs > 0 ? Math.min(1, ms / cd.durationMs) : 0;
+    for (const el of $$('[data-progress]')) el.style.transform = `scaleX(${frac})`;
+    for (const el of $$('.st-clock')) el.classList.toggle('done', ms <= 0 && cd.durationMs > 0);
     for (const el of $$('[data-when-clock]')) el.classList.toggle('hidden', ms <= 0);
   }
   setInterval(tickClock, 200);

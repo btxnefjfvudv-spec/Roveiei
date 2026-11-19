@@ -2,83 +2,73 @@
    Design tokens — every color / size / timing lives here
    ============================================================ */
 
-/* Heading font: Saira Condensed for Latin, Kanit for Thai */
-@font-face { font-family: 'RovHead'; font-weight: 700; font-display: block;
-  src: url('../fonts/saira-condensed-latin-700-normal.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+2000-206F, U+20AC; }
-@font-face { font-family: 'RovHead'; font-weight: 800; font-display: block;
-  src: url('../fonts/saira-condensed-latin-800-normal.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+2000-206F, U+20AC; }
-@font-face { font-family: 'RovHead'; font-weight: 900; font-display: block;
-  src: url('../fonts/saira-condensed-latin-900-normal.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+2000-206F, U+20AC; }
-@font-face { font-family: 'RovHead'; font-weight: 700; font-display: block;
-  src: url('../fonts/kanit-thai-800-normal.woff2') format('woff2');
-  unicode-range: U+0E00-0E7F; }
-@font-face { font-family: 'RovHead'; font-weight: 800 900; font-display: block;
-  src: url('../fonts/kanit-thai-900-normal.woff2') format('woff2');
-  unicode-range: U+0E00-0E7F; }
+/* Heading: Saira Condensed (Latin) + Kanit (Thai) */
+@font-face { font-family: 'RovHead'; font-weight: 500; font-display: block; src: url('../fonts/saira-condensed-latin-500-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+2000-206F, U+2190-21FF; }
+@font-face { font-family: 'RovHead'; font-weight: 600; font-display: block; src: url('../fonts/saira-condensed-latin-600-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+2000-206F, U+2190-21FF; }
+@font-face { font-family: 'RovHead'; font-weight: 700; font-display: block; src: url('../fonts/saira-condensed-latin-700-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+2000-206F, U+2190-21FF; }
+@font-face { font-family: 'RovHead'; font-weight: 800 900; font-display: block; src: url('../fonts/saira-condensed-latin-800-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+2000-206F, U+2190-21FF; }
+@font-face { font-family: 'RovHead'; font-weight: 500; font-display: block; src: url('../fonts/kanit-thai-500-normal.woff2') format('woff2'); unicode-range: U+0E00-0E7F; }
+@font-face { font-family: 'RovHead'; font-weight: 600; font-display: block; src: url('../fonts/kanit-thai-600-normal.woff2') format('woff2'); unicode-range: U+0E00-0E7F; }
+@font-face { font-family: 'RovHead'; font-weight: 700; font-display: block; src: url('../fonts/kanit-thai-700-normal.woff2') format('woff2'); unicode-range: U+0E00-0E7F; }
+@font-face { font-family: 'RovHead'; font-weight: 800 900; font-display: block; src: url('../fonts/kanit-thai-800-normal.woff2') format('woff2'); unicode-range: U+0E00-0E7F; }
 
-/* Body font: Kanit */
-@font-face { font-family: 'RovBody'; font-weight: 500; font-display: swap;
-  src: url('../fonts/kanit-thai-500-normal.woff2') format('woff2'); unicode-range: U+0E00-0E7F; }
-@font-face { font-family: 'RovBody'; font-weight: 500; font-display: swap;
-  src: url('../fonts/kanit-latin-500-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+2000-206F; }
-@font-face { font-family: 'RovBody'; font-weight: 700; font-display: swap;
-  src: url('../fonts/kanit-thai-700-normal.woff2') format('woff2'); unicode-range: U+0E00-0E7F; }
-@font-face { font-family: 'RovBody'; font-weight: 700; font-display: swap;
-  src: url('../fonts/kanit-latin-700-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+2000-206F; }
+/* Body: Kanit */
+@font-face { font-family: 'RovBody'; font-weight: 500; font-display: swap; src: url('../fonts/kanit-thai-500-normal.woff2') format('woff2'); unicode-range: U+0E00-0E7F; }
+@font-face { font-family: 'RovBody'; font-weight: 500; font-display: swap; src: url('../fonts/kanit-latin-500-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+2000-206F; }
+@font-face { font-family: 'RovBody'; font-weight: 600; font-display: swap; src: url('../fonts/kanit-thai-600-normal.woff2') format('woff2'); unicode-range: U+0E00-0E7F; }
+@font-face { font-family: 'RovBody'; font-weight: 600; font-display: swap; src: url('../fonts/kanit-latin-600-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+2000-206F; }
+@font-face { font-family: 'RovBody'; font-weight: 700 900; font-display: swap; src: url('../fonts/kanit-thai-700-normal.woff2') format('woff2'); unicode-range: U+0E00-0E7F; }
+@font-face { font-family: 'RovBody'; font-weight: 700 900; font-display: swap; src: url('../fonts/kanit-latin-700-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+2000-206F; }
 
 :root {
-  /* ---- palette ---- */
-  --c-void: #050609;          /* full-screen scene background */
-  --c-panel: #0C0E14;         /* scoreboard panel */
-  --c-panel-2: #161A24;       /* raised surface */
-  --c-line: #2A3142;          /* separators, empty dots */
-  --c-text: #FFFFFF;
-  --c-text-dim: #B9C1D4;
-  --c-ink: #0A0B10;           /* dark text on bright team color */
-  --c-accent: #FFFFFF;
+  /* ---- neutrals ---- */
+  --c-void: #06070B;            /* deepest background */
+  --c-base: #0A0C12;            /* scene base */
+  --c-panel: #0E1119;           /* panels */
+  --c-panel-2: #151925;         /* raised panels */
+  --c-panel-hi: #1C2130;        /* panel top highlight */
+  --c-line: #262C3B;            /* separators / empty pips */
+  --c-glass: rgba(10, 12, 18, .86);
+  --c-text: #F4F6FA;
+  --c-text-dim: #98A1B5;
+  --c-text-mute: #5E6679;
+  --c-ink: #0A0B10;             /* dark text on bright team colour */
 
-  /* team colors (overwritten by JS per side) */
-  --team-l: #FF3D8B;
-  --team-r: #FFD21A;
-  --ink-l: #0A0B10;
-  --ink-r: #0A0B10;
+  /* ---- team colours (set live by JS; *-rgb used for alpha) ---- */
+  --team-l: #FF3D8B;  --team-l-rgb: 255, 61, 139;   --ink-l: #0A0B10;
+  --team-r: #FFD21A;  --team-r-rgb: 255, 210, 26;   --ink-r: #0A0B10;
+  --win: #FF3D8B;     --win-rgb: 255, 61, 139;      --win-ink: #0A0B10;
 
   /* ---- type ---- */
   --font-head: 'RovHead', 'Kanit', 'Arial Narrow', sans-serif;
   --font-body: 'RovBody', 'Kanit', 'Segoe UI', sans-serif;
+  --track-label: .2em;          /* tracked uppercase labels */
+  --fs-label: 28px;             /* smallest text on stage (readable from far) */
 
   /* ---- shape ---- */
-  --cut: 28px;                /* chamfer size on panels */
-  --cut-sm: 14px;
+  --cut: 22px;
+  --cut-sm: 12px;
 
   /* ---- scoreboard ---- */
-  --sb-gap: 620px;            /* centre gap left for in-game HUD (set live from control) */
-  --sb-panel-w: 520px;        /* width of each team panel */
-  --sb-height: 92px;
-  --sb-stripe: 18px;          /* team color stripe */
-  --sb-logo: 68px;
-  --sb-tag-size: 66px;
-  --sb-dot: 30px;
-  --sb-dot-gap: 12px;
-  --sb-sub-h: 44px;           /* round / game strip under panels */
-  --sb-sub-size: 28px;
+  --sb-gap: 620px;              /* centre gap left for the in-game HUD (set from control) */
+  --sb-mod-w: 450px;            /* width of each team module */
+  --sb-h: 80px;
+  --sb-crest: 54px;
+  --sb-tag: 56px;
+  --sb-pip-w: 15px;
+  --sb-pip-h: 38px;
+  --sb-meta-h: 42px;
+  --sb-meta-size: 26px;
 
   /* ---- full-screen scenes ---- */
-  --fs-title: 150px;
-  --fs-sub: 48px;
-  --fs-clock: 260px;
-  --fs-tag: 260px;
-  --fs-name: 64px;
-  --fs-mono: 300px;
+  --pad-x: 120px;               /* safe margin left/right */
+  --pad-top: 64px;
 
-  /* ---- motion ---- */
+  /* ---- motion (no bounce: expo-out) ---- */
   --ease-out: cubic-bezier(.16, 1, .3, 1);
   --ease-in: cubic-bezier(.7, 0, .84, 0);
-  --ease-snap: cubic-bezier(.34, 1.56, .64, 1);
-  --t-in: 700ms;
-  --t-out: 450ms;
-  --t-stinger: 1300ms;
+  --ease-io: cubic-bezier(.83, 0, .17, 1);
+  --t-in: 800ms;
+  --t-out: 420ms;
+  --t-stinger: 1150ms;
 }
