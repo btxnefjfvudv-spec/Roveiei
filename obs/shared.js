@@ -1,15 +1,15 @@
-// State shared between control.html and overlay.html (same OBS browser profile)
-const KEY = 'rov-sportday-state';
+// State shared between index.html (control) and overlay.html (same browser / OBS profile)
+const KEY = 'rov-sportday-state-v2';
 const DEFAULT_STATE = {
   scene: 'score',            // score | break | winner | hidden
-  title: 'กีฬาสี ROV 2026',
-  round: 'รอบแรก',
+  title: 'SPORTS DAY 2026',
+  round: 'ROUND 1',
   bo: 3,
   game: 1,
-  a: { name: 'สุโขทัย', color: '#e63946', score: 0 },
-  b: { name: 'เชียงแสน', color: '#2a9df4', score: 0 },
-  breakTitle: 'เริ่มแข่งเร็วๆ นี้',
-  breakSub: 'STARTING SOON',
+  a: { name: 'SUKHOTHAI',   abbr: 'SKT', color: '#ec4f93', score: 0 },
+  b: { name: 'CHIANG SAEN', abbr: 'CSN', color: '#f5c518', score: 0 },
+  breakTitle: 'Starting Soon',
+  breakSub: 'การแข่งขันกำลังจะเริ่มขึ้น',
   countdownEnd: 0,
   winner: 'a',
   v: 0

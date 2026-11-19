@@ -3,110 +3,131 @@
 <head>
 <meta charset="utf-8">
 <title>ROV Overlay</title>
-<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@200;300;400;600&family=IBM+Plex+Sans+Thai:wght@200;300;400&display=swap" rel="stylesheet">
 <style>
-  :root { --a:#e63946; --b:#2a9df4; --gold:#ffd166; --ink:#0b0f1a; }
+  :root {
+    --a:#ec4f93; --b:#f5c518;
+    --gold:#cdb27a; --gold-soft:rgba(205,178,122,.35);
+    --ink:#0a0a0c; --glass:rgba(12,12,15,.82);
+    --serif:'Cormorant Garamond',serif;
+    --sans:'Inter','IBM Plex Sans Thai',system-ui,sans-serif;
+  }
   * { box-sizing:border-box; margin:0; padding:0; }
-  html,body { width:100%; height:100%; background:transparent; overflow:hidden;
-    font-family:'Kanit',system-ui,sans-serif; color:#fff; }
+  html,body { width:100%; height:100%; background:transparent; overflow:hidden; color:#f4f1ea; font-family:var(--sans); }
   #stage { position:absolute; left:0; top:0; width:1920px; height:1080px; transform-origin:0 0; }
-  .scene { position:absolute; inset:0; opacity:0; transition:opacity .5s; pointer-events:none; }
+  .scene { position:absolute; inset:0; opacity:0; transition:opacity .8s ease; pointer-events:none; }
   .scene.on { opacity:1; }
 
-  /* ---------- SCOREBOARD ---------- */
-  .bar { position:absolute; top:0; left:50%; transform:translateX(-50%) translateY(-120%);
-    display:flex; align-items:stretch; height:84px; transition:transform .6s cubic-bezier(.2,.9,.3,1.2); }
-  #score.on .bar { transform:translateX(-50%) translateY(0); }
-  .team { width:440px; display:flex; align-items:center; gap:16px; padding:0 26px;
-    font-weight:800; font-size:38px; letter-spacing:.5px; text-shadow:0 2px 6px rgba(0,0,0,.4); }
-  .team.a { background:linear-gradient(90deg,transparent,var(--a) 30%); justify-content:flex-end;
-    clip-path:polygon(8% 0,100% 0,100% 100%,0 100%); }
-  .team.b { background:linear-gradient(270deg,transparent,var(--b) 30%);
-    clip-path:polygon(0 0,92% 0,100% 100%,0 100%); }
-  .pips { display:flex; gap:7px; }
-  .pip { width:16px; height:16px; border-radius:50%; border:2px solid rgba(255,255,255,.85); }
-  .pip.won { background:#fff; box-shadow:0 0 10px #fff; }
-  .mid { width:220px; background:var(--ink); display:flex; flex-direction:column;
-    align-items:center; justify-content:center; border-bottom:4px solid var(--gold); }
-  .nums { font-size:50px; font-weight:800; line-height:1; display:flex; gap:22px; }
-  .nums .sep { color:var(--gold); }
-  .meta { font-size:16px; color:#cfd6e6; letter-spacing:1px; margin-top:2px; }
-  .titletag { position:absolute; top:92px; left:50%; transform:translateX(-50%);
-    background:rgba(11,15,26,.85); padding:4px 22px; border-radius:0 0 10px 10px;
-    font-size:20px; color:var(--gold); opacity:0; transition:opacity .6s .3s; }
-  #score.on .titletag { opacity:1; }
-  .bump { animation:bump .6s; }
-  @keyframes bump { 40% { transform:scale(1.5); color:var(--gold); } }
+  /* ===== SCOREBOARD ===== */
+  .board { position:absolute; top:28px; left:50%; transform:translate(-50%,-160%);
+    transition:transform .9s cubic-bezier(.16,1,.3,1); }
+  #score.on .board { transform:translate(-50%,0); }
+  .bar { display:flex; align-items:center; height:78px; background:var(--glass);
+    backdrop-filter:blur(14px); border:1px solid var(--gold-soft); border-radius:4px;
+    box-shadow:0 18px 50px rgba(0,0,0,.45); }
+  .side { display:flex; align-items:center; gap:22px; width:270px; height:100%; padding:0 28px; position:relative; }
+  .side.a { justify-content:flex-end; }
+  .side::before { content:''; position:absolute; top:14px; bottom:14px; width:3px; border-radius:2px; }
+  .side.a::before { left:0; background:var(--a); box-shadow:0 0 14px var(--a); }
+  .side.b::before { right:0; background:var(--b); box-shadow:0 0 14px var(--b); }
+  .abbr { font-family:var(--sans); font-weight:600; font-size:40px; letter-spacing:8px; }
+  .side.a .abbr { margin-right:-8px; }
+  .pips { display:flex; gap:9px; }
+  .pip { width:9px; height:9px; transform:rotate(45deg); border:1px solid var(--gold); }
+  .pip.won { background:var(--gold); box-shadow:0 0 10px var(--gold); }
+  .core { width:210px; height:100%; display:flex; align-items:center; justify-content:center; gap:22px;
+    border-left:1px solid var(--gold-soft); border-right:1px solid var(--gold-soft); }
+  .num { font-family:'Inter',sans-serif; font-weight:200; font-size:56px; line-height:1; width:44px; font-variant-numeric:tabular-nums; text-align:center; }
+  .dash { width:18px; height:1px; background:var(--gold); }
+  .sub { display:flex; justify-content:center; margin-top:10px; opacity:0; transition:opacity .8s .4s; }
+  #score.on .sub { opacity:1; }
+  .sub span { font-size:13px; letter-spacing:5px; color:var(--gold); padding:6px 20px;
+    background:var(--glass); border:1px solid var(--gold-soft); border-radius:3px; }
+  .flash { animation:flash 1s ease; }
+  @keyframes flash { 30% { color:var(--gold); text-shadow:0 0 24px var(--gold); transform:scale(1.18); } }
 
-  /* ---------- FULL SCREEN BG (break / winner) ---------- */
-  .bg { position:absolute; inset:0; background:
-      radial-gradient(circle at 20% 30%, color-mix(in srgb,var(--a) 55%,transparent), transparent 55%),
-      radial-gradient(circle at 80% 70%, color-mix(in srgb,var(--b) 55%,transparent), transparent 55%),
-      #070a12; }
-  .bg::after { content:''; position:absolute; inset:0;
-    background:repeating-linear-gradient(115deg,rgba(255,255,255,.035) 0 2px,transparent 2px 28px); }
+  /* ===== FULLSCREEN BACKDROP ===== */
+  .bg { position:absolute; inset:0; background:var(--ink); overflow:hidden; }
+  .bg::before { content:''; position:absolute; inset:-20%;
+    background:
+      radial-gradient(40% 50% at 12% 18%, color-mix(in srgb,var(--a) 28%,transparent), transparent 70%),
+      radial-gradient(40% 50% at 88% 82%, color-mix(in srgb,var(--b) 24%,transparent), transparent 70%);
+    animation:drift 18s ease-in-out infinite alternate; }
+  @keyframes drift { to { transform:translate(3%,-2%) scale(1.05); } }
+  .bg::after { content:''; position:absolute; inset:48px; border:1px solid var(--gold-soft); }
+  .corner { position:absolute; width:26px; height:26px; border-color:var(--gold); border-style:solid; }
+  .c1 { top:40px; left:40px; border-width:1px 0 0 1px; } .c2 { top:40px; right:40px; border-width:1px 1px 0 0; }
+  .c3 { bottom:40px; left:40px; border-width:0 0 1px 1px; } .c4 { bottom:40px; right:40px; border-width:0 1px 1px 0; }
   .center { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+  .eyebrow { display:flex; align-items:center; gap:26px; font-size:18px; letter-spacing:9px; color:var(--gold); font-weight:300; }
+  .eyebrow::before, .eyebrow::after { content:''; width:90px; height:1px; background:var(--gold); }
+  .rise > * { opacity:0; transform:translateY(24px); }
+  .scene.on .rise > * { animation:rise 1.1s cubic-bezier(.16,1,.3,1) forwards; }
+  .scene.on .rise > *:nth-child(2) { animation-delay:.12s } .scene.on .rise > *:nth-child(3) { animation-delay:.24s }
+  .scene.on .rise > *:nth-child(4) { animation-delay:.36s } .scene.on .rise > *:nth-child(5) { animation-delay:.48s }
+  @keyframes rise { to { opacity:1; transform:none; } }
 
   /* break */
-  .ev { font-size:34px; color:var(--gold); letter-spacing:3px; font-weight:600; }
-  .btitle { font-size:130px; font-weight:800; line-height:1.15; text-shadow:0 8px 30px rgba(0,0,0,.5); }
-  .bsub { font-size:36px; letter-spacing:14px; color:#cfd6e6; margin-top:6px; }
-  .count { font-size:150px; font-weight:800; margin-top:30px; font-variant-numeric:tabular-nums;
-    background:rgba(255,255,255,.06); padding:0 60px; border-radius:24px; border:2px solid rgba(255,255,255,.15); }
-  .vs { display:flex; align-items:center; gap:60px; margin-top:50px; font-size:64px; font-weight:800; }
-  .vs .chip { padding:10px 50px; border-radius:16px; min-width:420px; }
-  .vs i { font-style:normal; color:var(--gold); font-size:54px; }
+  .btitle { font-family:var(--serif); font-weight:500; font-style:italic; font-size:150px; line-height:1.05; margin-top:34px; }
+  .bsub { font-family:'IBM Plex Sans Thai',var(--sans); font-weight:200; font-size:30px; letter-spacing:4px; color:#cfc9bd; margin-top:14px; }
+  .count { font-family:var(--sans); font-weight:200; font-size:120px; letter-spacing:10px; margin-top:44px; font-variant-numeric:tabular-nums; }
+  .match { display:flex; align-items:center; gap:46px; margin-top:56px; font-size:30px; letter-spacing:10px; font-weight:300; }
+  .match .t { display:flex; align-items:center; gap:18px; }
+  .dot { width:12px; height:12px; border-radius:50%; }
+  .match .vs { font-family:var(--serif); font-style:italic; letter-spacing:2px; color:var(--gold); font-size:34px; }
 
   /* winner */
-  .wlabel { font-size:60px; letter-spacing:20px; color:var(--gold); font-weight:800; }
-  .wname { font-size:220px; font-weight:800; line-height:1.25; padding:10px 80px 40px; border-radius:30px;
-    margin:10px 0 20px; text-shadow:0 10px 40px rgba(0,0,0,.45); }
-  #winner.on .wname { animation:pop .9s cubic-bezier(.2,1.4,.4,1); }
-  @keyframes pop { from { transform:scale(.3); opacity:0; } }
-  .wscore { font-size:56px; font-weight:600; color:#e6ebf5; }
-  .confetti { position:absolute; top:-30px; width:14px; height:26px; opacity:.9; animation:fall linear infinite; }
-  @keyframes fall { to { transform:translateY(1150px) rotate(720deg); } }
+  .wname { font-family:var(--serif); font-weight:600; font-size:200px; line-height:1.05; letter-spacing:6px; margin:30px 0 8px;
+    background:linear-gradient(180deg,#fff 10%,var(--w) 95%); -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:drop-shadow(0 0 40px color-mix(in srgb,var(--w) 40%,transparent)); }
+  .rule { width:420px; height:1px; background:linear-gradient(90deg,transparent,var(--gold),transparent); margin:18px 0 26px; }
+  .wscore { display:flex; align-items:center; gap:30px; font-size:24px; letter-spacing:8px; font-weight:300; color:#d9d3c7; }
+  .wscore b { font-family:'Inter',sans-serif; font-weight:200; font-size:54px; letter-spacing:0; color:#fff; }
+  .spark { position:absolute; width:3px; height:3px; border-radius:50%; background:var(--gold);
+    box-shadow:0 0 8px 2px var(--gold); animation:float linear infinite; opacity:0; }
+  @keyframes float { 10% { opacity:.9 } 90% { opacity:.9 } to { transform:translateY(-1100px); opacity:0; } }
 </style>
 </head>
 <body>
 <div id="stage">
 
-  <!-- SCOREBOARD -->
   <section class="scene" id="score">
-    <div class="bar">
-      <div class="team a"><div class="pips" id="pipsA"></div><span id="nameA"></span></div>
-      <div class="mid">
-        <div class="nums"><span id="scA">0</span><span class="sep">:</span><span id="scB">0</span></div>
-        <div class="meta" id="meta"></div>
+    <div class="board">
+      <div class="bar">
+        <div class="side a"><div class="pips" id="pipsA"></div><div class="abbr" id="abA"></div></div>
+        <div class="core"><span class="num" id="scA">0</span><span class="dash"></span><span class="num" id="scB">0</span></div>
+        <div class="side b"><div class="abbr" id="abB"></div><div class="pips" id="pipsB"></div></div>
       </div>
-      <div class="team b"><span id="nameB"></span><div class="pips" id="pipsB"></div></div>
+      <div class="sub"><span id="meta"></span></div>
     </div>
-    <div class="titletag" id="tag"></div>
   </section>
 
-  <!-- BREAK / STARTING SOON -->
   <section class="scene" id="break">
     <div class="bg"></div>
-    <div class="center">
-      <div class="ev" id="bEv"></div>
+    <div class="corner c1"></div><div class="corner c2"></div><div class="corner c3"></div><div class="corner c4"></div>
+    <div class="center rise">
+      <div class="eyebrow" id="bEv"></div>
       <div class="btitle" id="bTitle"></div>
       <div class="bsub" id="bSub"></div>
       <div class="count" id="bCount"></div>
-      <div class="vs">
-        <div class="chip" id="vsA"></div><i>VS</i><div class="chip" id="vsB"></div>
+      <div class="match">
+        <div class="t"><span class="dot" style="background:var(--a)"></span><span id="mA"></span></div>
+        <span class="vs">vs</span>
+        <div class="t"><span id="mB"></span><span class="dot" style="background:var(--b)"></span></div>
       </div>
     </div>
   </section>
 
-  <!-- WINNER -->
   <section class="scene" id="winner">
     <div class="bg"></div>
-    <div id="conf"></div>
-    <div class="center">
-      <div class="ev" id="wEv"></div>
-      <div class="wlabel">WINNER</div>
+    <div id="sparks"></div>
+    <div class="corner c1"></div><div class="corner c2"></div><div class="corner c3"></div><div class="corner c4"></div>
+    <div class="center rise">
+      <div class="eyebrow">WINNER</div>
       <div class="wname" id="wName"></div>
-      <div class="wscore" id="wScore"></div>
+      <div class="rule"></div>
+      <div class="wscore"><span id="wA"></span><b id="wSA"></b><span style="color:var(--gold)">—</span><b id="wSB"></b><span id="wB"></span></div>
+      <div class="eyebrow" style="margin-top:46px;font-size:15px" id="wEv"></div>
     </div>
   </section>
 </div>
@@ -114,10 +135,7 @@
 <script src="shared.js"></script>
 <script>
 const $ = id => document.getElementById(id);
-function fit() {
-  const s = Math.min(innerWidth / 1920, innerHeight / 1080);
-  $('stage').style.transform = `scale(${s})`;
-}
+function fit() { $('stage').style.transform = `scale(${Math.min(innerWidth/1920, innerHeight/1080)})`; }
 addEventListener('resize', fit); fit();
 
 function pips(el, score, need) {
@@ -128,57 +146,54 @@ function pips(el, score, need) {
     el.appendChild(d);
   }
 }
-function setNum(el, val) {
-  if (el.textContent !== String(val)) {
-    el.textContent = val;
-    el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump');
+function setNum(el, v) {
+  if (el.textContent !== String(v)) {
+    el.textContent = v; el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
   }
 }
 
-let S = null, confDone = false;
+let S = null, prevScene = null;
 function render(s) {
   S = s;
-  const r = document.documentElement.style;
-  r.setProperty('--a', s.a.color); r.setProperty('--b', s.b.color);
-  document.querySelectorAll('.scene').forEach(x => x.classList.toggle('on', x.id === s.scene));
-
-  const need = Math.ceil(s.bo / 2);
-  $('nameA').textContent = s.a.name; $('nameB').textContent = s.b.name;
+  const root = document.documentElement.style;
+  root.setProperty('--a', s.a.color); root.setProperty('--b', s.b.color);
+  root.setProperty('--w', s[s.winner].color);
+  if (s.scene !== prevScene) {
+    document.querySelectorAll('.scene').forEach(x => x.classList.toggle('on', x.id === s.scene));
+    if (s.scene === 'winner') sparks(); else $('sparks').innerHTML = '';
+    prevScene = s.scene;
+  }
+  const need = Math.ceil(s.bo / 2), ev = `${s.title}  ·  ${s.round}`;
+  $('abA').textContent = s.a.abbr; $('abB').textContent = s.b.abbr;
   setNum($('scA'), s.a.score); setNum($('scB'), s.b.score);
   pips($('pipsA'), s.a.score, need); pips($('pipsB'), s.b.score, need);
-  $('meta').textContent = `GAME ${s.game} · BO${s.bo}`;
-  $('tag').textContent = `${s.title} · ${s.round}`;
+  $('meta').textContent = `GAME ${s.game}  ·  BEST OF ${s.bo}`;
 
-  $('bEv').textContent = `${s.title} · ${s.round}`;
-  $('bTitle').textContent = s.breakTitle;
-  $('bSub').textContent = s.breakSub;
-  $('vsA').textContent = s.a.name; $('vsA').style.background = s.a.color;
-  $('vsB').textContent = s.b.name; $('vsB').style.background = s.b.color;
+  $('bEv').textContent = ev; $('bTitle').textContent = s.breakTitle; $('bSub').textContent = s.breakSub;
+  $('mA').textContent = s.a.name; $('mB').textContent = s.b.name;
 
-  const w = s[s.winner];
-  $('wEv').textContent = `${s.title} · ${s.round}`;
-  $('wName').textContent = w.name; $('wName').style.background = w.color;
-  $('wScore').textContent = `${s.a.name}  ${s.a.score} - ${s.b.score}  ${s.b.name}`;
-  if (s.scene === 'winner') confetti(w.color); else { $('conf').innerHTML = ''; confDone = false; }
+  $('wName').textContent = s[s.winner].name;
+  $('wA').textContent = s.a.abbr; $('wB').textContent = s.b.abbr;
+  $('wSA').textContent = s.a.score; $('wSB').textContent = s.b.score;
+  $('wEv').textContent = ev;
 }
-function confetti(color) {
-  if (confDone) return; confDone = true;
-  const cols = [color, '#ffd166', '#ffffff'];
-  for (let i = 0; i < 90; i++) {
-    const c = document.createElement('div');
-    c.className = 'confetti';
-    c.style.left = Math.random() * 1920 + 'px';
-    c.style.background = cols[i % 3];
-    c.style.animationDuration = 3 + Math.random() * 4 + 's';
-    c.style.animationDelay = -Math.random() * 6 + 's';
-    $('conf').appendChild(c);
+function sparks() {
+  const box = $('sparks'); box.innerHTML = '';
+  for (let i = 0; i < 60; i++) {
+    const p = document.createElement('div');
+    p.className = 'spark';
+    p.style.left = Math.random() * 1920 + 'px';
+    p.style.top = 1080 + Math.random() * 100 + 'px';
+    p.style.animationDuration = 8 + Math.random() * 10 + 's';
+    p.style.animationDelay = -Math.random() * 18 + 's';
+    const sz = 1 + Math.random() * 3; p.style.width = p.style.height = sz + 'px';
+    box.appendChild(p);
   }
 }
 setInterval(() => {
   if (!S) return;
-  const left = Math.max(0, Math.round((S.countdownEnd - Date.now()) / 1000));
-  const el = $('bCount');
-  el.style.display = S.countdownEnd && left > 0 ? '' : 'none';
+  const left = Math.max(0, Math.round((S.countdownEnd - Date.now()) / 1000)), el = $('bCount');
+  el.style.visibility = S.countdownEnd && left > 0 ? 'visible' : 'hidden';
   el.textContent = String(Math.floor(left / 60)).padStart(2, '0') + ':' + String(left % 60).padStart(2, '0');
 }, 250);
 
