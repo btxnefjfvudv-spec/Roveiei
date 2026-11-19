@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<title>ROV Overlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root { --a:#e63946; --b:#2a9df4; --gold:#ffd166; --ink:#0b0f1a; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html,body { width:100%; height:100%; background:transparent; overflow:hidden;
+    font-family:'Kanit',system-ui,sans-serif; color:#fff; }
+  #stage { position:absolute; left:0; top:0; width:1920px; height:1080px; transform-origin:0 0; }
+  .scene { position:absolute; inset:0; opacity:0; transition:opacity .5s; pointer-events:none; }
+  .scene.on { opacity:1; }
+
+  /* ---------- SCOREBOARD ---------- */
+  .bar { position:absolute; top:0; left:50%; transform:translateX(-50%) translateY(-120%);
+    display:flex; align-items:stretch; height:84px; transition:transform .6s cubic-bezier(.2,.9,.3,1.2); }
+  #score.on .bar { transform:translateX(-50%) translateY(0); }
+  .team { width:440px; display:flex; align-items:center; gap:16px; padding:0 26px;
+    font-weight:800; font-size:38px; letter-spacing:.5px; text-shadow:0 2px 6px rgba(0,0,0,.4); }
+  .team.a { background:linear-gradient(90deg,transparent,var(--a) 30%); justify-content:flex-end;
+    clip-path:polygon(8% 0,100% 0,100% 100%,0 100%); }
+  .team.b { background:linear-gradient(270deg,transparent,var(--b) 30%);
+    clip-path:polygon(0 0,92% 0,100% 100%,0 100%); }
+  .pips { display:flex; gap:7px; }
+  .pip { width:16px; height:16px; border-radius:50%; border:2px solid rgba(255,255,255,.85); }
+  .pip.won { background:#fff; box-shadow:0 0 10px #fff; }
+  .mid { width:220px; background:var(--ink); display:flex; flex-direction:column;
+    align-items:center; justify-content:center; border-bottom:4px solid var(--gold); }
+  .nums { font-size:50px; font-weight:800; line-height:1; display:flex; gap:22px; }
+  .nums .sep { color:var(--gold); }
+  .meta { font-size:16px; color:#cfd6e6; letter-spacing:1px; margin-top:2px; }
+  .titletag { position:absolute; top:92px; left:50%; transform:translateX(-50%);
+    background:rgba(11,15,26,.85); padding:4px 22px; border-radius:0 0 10px 10px;
+    font-size:20px; color:var(--gold); opacity:0; transition:opacity .6s .3s; }
+  #score.on .titletag { opacity:1; }
+  .bump { animation:bump .6s; }
+  @keyframes bump { 40% { transform:scale(1.5); color:var(--gold); } }
+
+  /* ---------- FULL SCREEN BG (break / winner) ---------- */
+  .bg { position:absolute; inset:0; background:
+      radial-gradient(circle at 20% 30%, color-mix(in srgb,var(--a) 55%,transparent), transparent 55%),
+      radial-gradient(circle at 80% 70%, color-mix(in srgb,var(--b) 55%,transparent), transparent 55%),
+      #070a12; }
+  .bg::after { content:''; position:absolute; inset:0;
+    background:repeating-linear-gradient(115deg,rgba(255,255,255,.035) 0 2px,transparent 2px 28px); }
+  .center { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+
+  /* break */
+  .ev { font-size:34px; color:var(--gold); letter-spacing:3px; font-weight:600; }
+  .btitle { font-size:130px; font-weight:800; line-height:1.15; text-shadow:0 8px 30px rgba(0,0,0,.5); }
+  .bsub { font-size:36px; letter-spacing:14px; color:#cfd6e6; margin-top:6px; }
+  .count { font-size:150px; font-weight:800; margin-top:30px; font-variant-numeric:tabular-nums;
+    background:rgba(255,255,255,.06); padding:0 60px; border-radius:24px; border:2px solid rgba(255,255,255,.15); }
+  .vs { display:flex; align-items:center; gap:60px; margin-top:50px; font-size:64px; font-weight:800; }
+  .vs .chip { padding:10px 50px; border-radius:16px; min-width:420px; }
+  .vs i { font-style:normal; color:var(--gold); font-size:54px; }
+
+  /* winner */
+  .wlabel { font-size:60px; letter-spacing:20px; color:var(--gold); font-weight:800; }
+  .wname { font-size:220px; font-weight:800; line-height:1.25; padding:10px 80px 40px; border-radius:30px;
+    margin:10px 0 20px; text-shadow:0 10px 40px rgba(0,0,0,.45); }
+  #winner.on .wname { animation:pop .9s cubic-bezier(.2,1.4,.4,1); }
+  @keyframes pop { from { transform:scale(.3); opacity:0; } }
+  .wscore { font-size:56px; font-weight:600; color:#e6ebf5; }
+  .confetti { position:absolute; top:-30px; width:14px; height:26px; opacity:.9; animation:fall linear infinite; }
+  @keyframes fall { to { transform:translateY(1150px) rotate(720deg); } }
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- SCOREBOARD -->
+  <section class="scene" id="score">
+    <div class="bar">
+      <div class="team a"><div class="pips" id="pipsA"></div><span id="nameA"></span></div>
+      <div class="mid">
+        <div class="nums"><span id="scA">0</span><span class="sep">:</span><span id="scB">0</span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="team b"><span id="nameB"></span><div class="pips" id="pipsB"></div></div>
+    </div>
+    <div class="titletag" id="tag"></div>
+  </section>
+
+  <!-- BREAK / STARTING SOON -->
+  <section class="scene" id="break">
+    <div class="bg"></div>
+    <div class="center">
+      <div class="ev" id="bEv"></div>
+      <div class="btitle" id="bTitle"></div>
+      <div class="bsub" id="bSub"></div>
+      <div class="count" id="bCount"></div>
+      <div class="vs">
+        <div class="chip" id="vsA"></div><i>VS</i><div class="chip" id="vsB"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WINNER -->
+  <section class="scene" id="winner">
+    <div class="bg"></div>
+    <div id="conf"></div>
+    <div class="center">
+      <div class="ev" id="wEv"></div>
+      <div class="wlabel">WINNER</div>
+      <div class="wname" id="wName"></div>
+      <div class="wscore" id="wScore"></div>
+    </div>
+  </section>
+</div>
+
+<script src="shared.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+function fit() {
+  const s = Math.min(innerWidth / 1920, innerHeight / 1080);
+  $('stage').style.transform = `scale(${s})`;
+}
+addEventListener('resize', fit); fit();
+
+function pips(el, score, need) {
+  el.innerHTML = '';
+  for (let i = 0; i < need; i++) {
+    const d = document.createElement('div');
+    d.className = 'pip' + (i < score ? ' won' : '');
+    el.appendChild(d);
+  }
+}
+function setNum(el, val) {
+  if (el.textContent !== String(val)) {
+    el.textContent = val;
+    el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump');
+  }
+}
+
+let S = null, confDone = false;
+function render(s) {
+  S = s;
+  const r = document.documentElement.style;
+  r.setProperty('--a', s.a.color); r.setProperty('--b', s.b.color);
+  document.querySelectorAll('.scene').forEach(x => x.classList.toggle('on', x.id === s.scene));
+
+  const need = Math.ceil(s.bo / 2);
+  $('nameA').textContent = s.a.name; $('nameB').textContent = s.b.name;
+  setNum($('scA'), s.a.score); setNum($('scB'), s.b.score);
+  pips($('pipsA'), s.a.score, need); pips($('pipsB'), s.b.score, need);
+  $('meta').textContent = `GAME ${s.game} · BO${s.bo}`;
+  $('tag').textContent = `${s.title} · ${s.round}`;
+
+  $('bEv').textContent = `${s.title} · ${s.round}`;
+  $('bTitle').textContent = s.breakTitle;
+  $('bSub').textContent = s.breakSub;
+  $('vsA').textContent = s.a.name; $('vsA').style.background = s.a.color;
+  $('vsB').textContent = s.b.name; $('vsB').style.background = s.b.color;
+
+  const w = s[s.winner];
+  $('wEv').textContent = `${s.title} · ${s.round}`;
+  $('wName').textContent = w.name; $('wName').style.background = w.color;
+  $('wScore').textContent = `${s.a.name}  ${s.a.score} - ${s.b.score}  ${s.b.name}`;
+  if (s.scene === 'winner') confetti(w.color); else { $('conf').innerHTML = ''; confDone = false; }
+}
+function confetti(color) {
+  if (confDone) return; confDone = true;
+  const cols = [color, '#ffd166', '#ffffff'];
+  for (let i = 0; i < 90; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random() * 1920 + 'px';
+    c.style.background = cols[i % 3];
+    c.style.animationDuration = 3 + Math.random() * 4 + 's';
+    c.style.animationDelay = -Math.random() * 6 + 's';
+    $('conf').appendChild(c);
+  }
+}
+setInterval(() => {
+  if (!S) return;
+  const left = Math.max(0, Math.round((S.countdownEnd - Date.now()) / 1000));
+  const el = $('bCount');
+  el.style.display = S.countdownEnd && left > 0 ? '' : 'none';
+  el.textContent = String(Math.floor(left / 60)).padStart(2, '0') + ':' + String(left % 60).padStart(2, '0');
+}, 250);
+
+onState(render);
+</script>
+</body>
+</html>
